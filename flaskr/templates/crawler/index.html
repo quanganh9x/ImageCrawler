@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Gallery{% endblock %}</h1>
+
+  <a class="action" href="{{ url_for('crawler.create') }}">Crawl</a>
+
+{% endblock %}
+
+{% block content %}
+  {% for gallery in galleries %}
+    <article class="post">
+      <header>
+        <div>
+          <a class="action" href="{{ url_for('crawler.detail', id=gallery[0]) }}"><h1>{{ gallery[0] }}</h1></a>
+        </div>
+      </header>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

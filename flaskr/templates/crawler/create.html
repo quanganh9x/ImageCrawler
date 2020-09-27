@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Crawler{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="site">Site</label>
+    <select name="site" id="site" value="{{ request.form['site'] }}">
+        <option value="GitHub">GitHub</option>
+        <option value="Kaggle">Kaggle</option>
+    </select>
+
+    <br>
+
+    <label for="tablename">Table name in DB</label>
+    <input type="text" name="tablename" id="tablename" value="{{ request.form['tablename'] }}" />
+
+    <br>
+
+    <label for="sep">Sep (parser optional)</label>
+    <input type="text" name="sep" id="sep" value="{{ request.form['sep'] }}" />
+
+    <br>
+
+    <label for="url">URL</label>
+    <input type="text" name="url" id="url" value="{{ request.form['url'] }}" />
+
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
