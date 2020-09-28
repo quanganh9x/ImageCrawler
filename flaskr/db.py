@@ -1,6 +1,5 @@
-import sqlite3
-
 from flask import current_app, g
+from sqlalchemy import engine, create_engine
 
 
 def init_app(app):
@@ -9,11 +8,7 @@ def init_app(app):
 
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
+        g.db = create_engine('mysql://root:Nam123456@localhost/imagecrawler?charset=utf8mb4').raw_connection()
 
     return g.db
 

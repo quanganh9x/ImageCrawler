@@ -4,6 +4,7 @@ import time
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, make_response, jsonify
 )
+from sqlalchemy import create_engine
 
 from flaskr.db import get_db
 
@@ -52,6 +53,7 @@ def move_files(prefix):
     image_files = []
     image_files.extend(download_dir.rglob('*.jpg'))
     image_files.extend(download_dir.rglob('*.png'))
+    image_files.extend(download_dir.rglob('*.jpeg'))
 
     try:
         if not data_dir.joinpath(prefix).exists():
@@ -82,13 +84,16 @@ def import_db(sep, tablename):
     if not prefix:
         raise ValueError()
 
-    db = get_db()
-
     csv_files = data_dir.joinpath(prefix).rglob('*.csv')
 
     for file in csv_files:
-        reader = pandas.read_csv(file, sep=sep)
-        reader.to_sql(tablename, db, if_exists='append', index=False)
+        engine = create_engine('mysql://root:Nam123456@localhost/imagecrawler?charset=utf8mb4', echo=False)
+
+        reader = pandas.read_csv(file, sep=sep, encoding='utf-8')
+        try:
+            reader.to_sql(tablename, engine, if_exists='append', index=False)
+        except ValueError as err:
+            logging.error(err)
 
 
 @bp.route('/')
@@ -96,7 +101,7 @@ def index():
     db = get_db()
 
     cursor = db.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'imagecrawler';")
     tables = cursor.fetchall()
 
     return render_template('crawler/index.html', galleries=tables)
@@ -128,7 +133,9 @@ def load():
         if counter == 0:
             print(f"Returning posts 0 to {quantity}")
             data = list()
-            rows = db.cursor().execute(f"SELECT `Image Index` from {tablename} limit {quantity}").fetchall()
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * FROM {tablename} LIMIT {quantity}")
+            rows = cursor.fetchall()
             for row in rows:
                 data.append(list(row))
             res = make_response(jsonify(data), 200)
@@ -136,7 +143,9 @@ def load():
         else:
             print(f"Returning posts {counter} to {counter + quantity}")
             data = list()
-            rows = db.cursor().execute(f"SELECT `Image Index` from {tablename} limit {quantity} offset {counter}").fetchall()
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * from {tablename} limit {quantity} offset {counter}")
+            rows = cursor.fetchall()
             for row in rows:
                 data.append(list(row))
             res = make_response(jsonify(data), 200)

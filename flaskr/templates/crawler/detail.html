@@ -96,8 +96,27 @@
                         let template_clone = template.content.cloneNode(true);
 
                         // Query & update the template content
-                        template_clone.querySelector("#title").setAttribute('src', '/static/data/{{name}}/' + data[i][0]);
-                        template_clone.querySelector("#content").innerHTML = data[i][0];
+                        const pattern = ['jpg', 'png', 'jpeg'];
+
+                        function contains(target, pattern) {
+                            if (target === undefined || target === null || target === '') return false;
+                            const str = target.toString();
+
+                            let value = 0;
+                            pattern.forEach(function (word) {
+                                value = value + str.includes(word);
+                            });
+                            return (value === 1)
+                        }
+
+                        let img = '';
+
+                        for (let j = 0; j < data[i].length; j++) {
+                            if (contains(data[i][j], pattern)) img = data[i][j]
+                        }
+
+                        template_clone.querySelector("#title").setAttribute('src', '/static/data/{{name}}/' + img);
+                        template_clone.querySelector("#content").innerHTML = data[i];
 
                         // Append template to dom
                         scroller.appendChild(template_clone);
