@@ -13,6 +13,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
     <title>{{ name }}</title>
+    <style>
+        #myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+#title:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content, #content {
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+  .modal-content {
+    width: 100%;
+  }
+}
+    </style>
 </head>
 
 <!-- sticky-top navbar displaying the counter -->
@@ -27,10 +108,10 @@
 <main class="mt-3">
 
     <div class="container">
-        <div class="row">
-            <div class="col">
+        <div>
+            <div>
 
-                <h1 class="display-4 mb-3">{{ name }}</h1>
+                <h1 class="display-4 mb-3">Database-Name: {{ name }}</h1>
 
                 <!-- div to contain the content -->
                 <div id="scroller" class="mb-3">
@@ -39,15 +120,25 @@
                     <template id="post_template">
 
                         <!-- template content -->
-                        <div class="card">
-                            <img class="card-img-top" id="title" alt="{{ name }}">
-                            <div class="card-body">
-                                <p class="card-text text-center" id="content"></p>
-                            </div>
+{#                         <div class="card">#}
+{#                            <img class="card-img-top" style="float: left; height: 215px; width: 246px;" id="title" alt="{{ name }}">#}
+{#                            <div class="card-body" style="float: right;">#}
+{#                                <p class="card-text text-center" id="content"></p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="card">#}
+                        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                            <img style="height:215px; width:264px;" src="" id="title" alt="{{ name }}" onclick="showImage()" >
+                        </div>
+                        <div id="myModal" class="modal">
+                            <span class="close">&times;</span>
+                            <img class="modal-content" id="img-after">
+                            <div id="content"></div>
                         </div>
 
-                    </template>
 
+                    </template>
+                </div>
                 </div>
 
                 <!-- element to trigger the IntersectionObserver -->
@@ -148,6 +239,7 @@
                 return;
             }
 
+
             // Call the loadItems function
             loadItems();
 
@@ -156,6 +248,47 @@
 // Instruct the IntersectionObserver to watch the sentinel
         intersectionObserver.observe(sentinel);
     });
+var modal = document.getElementById("myModal");
+
+            const showImageInfo = (image_name) => {
+                var modal = document.getElementById("myModal")
+            }
+            const showImage = (image) => {
+                // Get the modal
+                // Get the image and insert it inside the modal - use its "alt" text as a caption
+                var modalImg = document.getElementById("title");
+                var captionText = document.getElementById("content");
+
+                  modal.style.display = "block";
+                  modalImg.src = image.src;           // source to input image
+                  // captionText.innerHTML = captionText.innerHTML  ; // using for title of the images
+                // Get the <span> element that closes the modal
+                var span = document.getElementsByClassName("close")[0];
+
+                // When  user clicks on <span> (x), close the modal
+                span.onclick = function(event){
+                  modal.style.display = "none";
+
+                }
+                getIDimage();
+
+            }
+             document.onkeydown = function(evt) {
+                    evt = evt || window.event;
+                if (evt.keyCode == 27) {
+
+                    modal.style.display="none";
+                }
+             };
+
+            function getIDimage(){
+                var fullPath = document.getElementById("img-after").src;
+                var filename = fullPath.split("/").pop();
+                    document.getElementById("title").value = filename;
+
+                return filename
+            }
+
 </script>
 </body>
 

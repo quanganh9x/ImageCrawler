@@ -1,11 +1,9 @@
-import random
-import time
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, make_response, jsonify
 )
 from sqlalchemy import create_engine
-
+#import file from another source
 from flaskr.db import get_db
 
 from kaggle.api.kaggle_api_extended import KaggleApi
@@ -88,7 +86,6 @@ def import_db(sep, tablename):
 
     for file in csv_files:
         engine = create_engine('mysql://root:Nam123456@localhost/imagecrawler?charset=utf8mb4', echo=False)
-
         reader = pandas.read_csv(file, sep=sep, encoding='utf-8')
         try:
             reader.to_sql(tablename, engine, if_exists='append', index=False)
@@ -177,6 +174,7 @@ def create():
 
         if error is not None:
             flash(error)
+
         else:
             success = False
             if site == 'Kaggle':
