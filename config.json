@@ -1,0 +1,12 @@
+{
+  "boxAppSettings": {
+    "clientID": "mofy3anfaged1eccd2yvf1qt8jbv6vp1",
+    "clientSecret": "9aEzi5eRCWSdMAp3New46PLWqoKtCUEl",
+    "appAuth": {
+      "publicKeyID": "",
+      "privateKey": "",
+      "passphrase": ""
+    }
+  },
+  "enterpriseID": "0"
+}

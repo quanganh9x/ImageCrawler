@@ -8,7 +8,7 @@ def init_app(app):
 
 def get_db():
     if 'db' not in g:
-        g.db = create_engine('mysql://root:Nam123456@localhost/imagecrawler?charset=utf8mb4').raw_connection()
+        g.db = create_engine('mysql://root:@localhost/imagecrawler?charset=utf8mb4').raw_connection()
 
     return g.db
 

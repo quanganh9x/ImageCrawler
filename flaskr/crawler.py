@@ -3,14 +3,16 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, make_response, jsonify
 )
 from sqlalchemy import create_engine
-#import file from another source
 from flaskr.db import get_db
 
+from subprocess import check_output
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 from pathlib import Path
 import logging
+import re
 import pandas
+from urllib import request, response
 
 bp = Blueprint('crawler', __name__)
 
@@ -22,8 +24,11 @@ def import_box(url):
     return False
 
 
-def import_github(url):
-    return False
+def import_github(url, tablename):
+    cmd = 'git clone https://github.com/' + url + ' ' + str(download_dir.joinpath(tablename).resolve())
+    logging.info(cmd)
+    check_output(cmd, shell=True).decode()
+    return True
 
 
 def import_kaggle(url):
@@ -85,7 +90,15 @@ def import_db(sep, tablename):
     csv_files = data_dir.joinpath(prefix).rglob('*.csv')
 
     for file in csv_files:
-        engine = create_engine('mysql://root:Nam123456@localhost/imagecrawler?charset=utf8mb4', echo=False)
+        fin = open(file, "rt")
+        data = fin.read()
+        data = re.sub('[^a-zA-Z0-9 \n\.]', '', 'ID')
+        fin.close()
+        fin = open(file, "wt")
+        fin.write(data)
+        fin.close()
+
+        engine = create_engine('mysql://root:@localhost/imagecrawler?charset=utf8mb4', echo=False)
         reader = pandas.read_csv(file, sep=sep, encoding='utf-8')
         try:
             reader.to_sql(tablename, engine, if_exists='append', index=False)
@@ -180,7 +193,7 @@ def create():
             if site == 'Kaggle':
                 success = import_kaggle(url)
             elif site == 'GitHub':
-                success = import_github(url)
+                success = import_github(url, tablename)
             elif site == 'Box':
                 success = import_box(url)
 
